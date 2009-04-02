@@ -199,9 +199,13 @@ else {
    $tMessage = $PALANG['pVacation_result_error'];
 }
 
-include ("templates/header.php");
-include ("templates/menu.php");
-include ("templates/edit-vacation.php");
-include ("templates/footer.php");
+$smarty->assign ('tUseremail', $tUseremail);
+$smarty->assign ('tSubject', htmlentities(stripslashes($tSubject), ENT_QUOTES, 'UTF-8'));
+$smarty->assign ('tBody', htmlentities(stripslashes($tBody), ENT_QUOTES , 'UTF-8'));
+$smarty->assign ('tMessage', $tMessage);
+$smarty->assign ('fCanceltarget', $fCanceltarget);
+$smarty->assign ('smarty_template', 'edit-vacation');
+$smarty->display ('index.tpl');
+
 /* vim: set expandtab softtabstop=3 tabstop=3 shiftwidth=3: */
 ?>

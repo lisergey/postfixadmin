@@ -48,7 +48,6 @@ else {
 
 
 $pCreate_mailbox_password_text = $PALANG['pCreate_mailbox_password_text'];
-$pCreate_mailbox_name_text = $PALANG['pCreate_mailbox_name_text'];
 $pCreate_mailbox_quota_text = $PALANG['pCreate_mailbox_quota_text'];
 
 if ($_SERVER['REQUEST_METHOD'] == "GET")
@@ -323,10 +322,17 @@ TODO: this is the end of /create-mailbox.php code segment
    }
 }
 
-include ("templates/header.php");
-include ("templates/menu.php");
-include ("templates/create-mailbox.php");
-include ("templates/footer.php");
+$smarty->assign ('tUsername', $tUsername);
+$smarty->assign ('select_options', select_options ($list_domains, array ($tDomain)));
+$smarty->assign ('pCreate_mailbox_username_text', $pCreate_mailbox_username_text);
+$smarty->assign ('pCreate_mailbox_password_text', $pCreate_mailbox_password_text);
+$smarty->assign ('tName', $tName);
+$smarty->assign ('tQuota', $tQuota);
+$smarty->assign ('pCreate_mailbox_quota_text', $pCreate_mailbox_quota_text);
+$smarty->assign ('tMessage', $tMessage);
+$smarty->assign ('smarty_template', 'create-mailbox');
+$smarty->display ('index.tpl');
+
 
 /* vim: set expandtab softtabstop=3 tabstop=3 shiftwidth=3: */
 ?>

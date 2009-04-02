@@ -225,11 +225,10 @@ else
     flash_error($PALANG['invalid_parameter']);
 }
 
+$smarty->assign ('smarty_template', 'message');
+$smarty->assign ('tMessage', $tMessage);
+$smarty->display ('index.tpl');
 
-include ("templates/header.php");
-include ("templates/menu.php");
-include ("templates/message.php");
-include ("templates/footer.php");
 
 /* vim: set expandtab softtabstop=4 tabstop=4 shiftwidth=4: */
 ?>

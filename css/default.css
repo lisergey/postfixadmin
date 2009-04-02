@@ -240,12 +240,6 @@ ul.flash-error {
 	line-height: 30px;
 }
 
-#nav_bar {
-	text-align: right;
-	width: 750px;
-	margin: 0 auto;
-}
-
 #alias_domain_table, #alias_table, #mailbox_table, #overview_table, #log_table, #admin_table {
 	width: 750px;
 	margin: 0px auto;
@@ -312,4 +306,10 @@ div.setup {
 
 div.setup li {
 	padding-bottom:1em;
+}
+
+div.nav_bar {
+	text-align: left;
+	width: 750px;
+	margin: 0 auto;
 }

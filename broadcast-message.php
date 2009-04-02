@@ -79,19 +79,20 @@ if ($_SERVER['REQUEST_METHOD'] == "POST")
             }
          }
       }
-      include ("templates/header.php");
-      include ("templates/menu.php");
-      echo '<p>'.$PALANG['pBroadcast_success'].'</p>';
-      include ("templates/footer.php");
+		$smarty->assign ('tMessage', $PALANG['pBroadcast_success']);
+		$smarty->assign ('smarty_template', 'message');
+		$smarty->display ('index.tpl');
+//		echo '<p>'.$PALANG['pBroadcast_success'].'</p>';
    }
 }
 
 if ($_SERVER['REQUEST_METHOD'] == "GET" || $error == 1)
 {
-   include ("templates/header.php");
-   include ("templates/menu.php");
-   include ("templates/broadcast-message.php");
-   include ("templates/footer.php");
+	$smarty->assign ('error', $error);
+	$smarty->assign ('smarty_template', 'broadcast-message');
+	$smarty->display ('index.tpl');
+
+//   include ("templates/broadcast-message.php");
 }
 
 /* vim: set expandtab softtabstop=3 tabstop=3 shiftwidth=3: */

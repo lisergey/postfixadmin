@@ -169,9 +169,14 @@ if ($_SERVER['REQUEST_METHOD'] == "POST")
         }
 }
 
-include ("templates/header.php");
-include ("templates/menu.php");
-include ("templates/create-alias.php");
-include ("templates/footer.php");
+$smarty->assign ('tAddress', $tAddress);
+$smarty->assign ('select_options', select_options ($list_domains, array ($tDomain)));
+$smarty->assign ('pCreate_alias_address_text', $pCreate_alias_address_text);
+$smarty->assign ('tGoto', $tGoto);
+$smarty->assign ('pCreate_alias_goto_text', $pCreate_alias_goto_text);
+$smarty->assign ('tMessage', $tMessage);
+$smarty->assign ('smarty_template', 'create-alias');
+$smarty->display ('index.tpl');
+
 /* vim: set expandtab softtabstop=4 tabstop=4 shiftwidth=4: */
 ?>

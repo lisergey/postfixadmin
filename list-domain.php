@@ -50,24 +50,36 @@ if (isset($admin_properties) && $admin_properties['domain_count'] == 'ALL') { # 
    $list_domains = list_domains_for_admin(authentication_get_username());
 }
 
-   if (!empty ($list_domains))
-   {
-      for ($i = 0; $i < sizeof ($list_domains); $i++)
-      {
-         $domain_properties[$i] = get_domain_properties ($list_domains[$i]);
-      }
-   }
+if (!empty ($list_domains))
+{
+	for ($i = 0; $i < sizeof ($list_domains); $i++)
+	{
+		$domain_properties [$i] = get_domain_properties ($list_domains[$i]);
+
+		$domain_properties [$i]['name']		= $list_domains [$i];
+		$domain_properties [$i]['backupmx']	= ($domain_properties [$i]['backupmx'] == 1)	? $PALANG ['YES'] : $PALANG ['NO'];
+		$domain_properties [$i]['active']	= ($domain_properties [$i]['active'] == 1)		? $PALANG ['YES'] : $PALANG ['NO'];
+		
+		$domain_properties [$i]['maxquota']		= eval_size ($domain_properties [$i]['maxquota']);
+		$domain_properties [$i]['aliases']		= eval_size ($domain_properties [$i]['aliases']);
+		$domain_properties [$i]['mailboxes']	= eval_size ($domain_properties [$i]['mailboxes']);
+	}
+}
 #}
 
-include ("templates/header.php");
-include ("templates/menu.php");
-
-if ($is_superadmin) {
-   include ("templates/admin_list-domain.php");
-} else {
-   include ("templates/overview-get.php");
+$smarty->assign ('domain_properties', $domain_properties);
+if ($is_superadmin)
+{
+	$smarty->assign ('select_options', select_options ($list_admins, array ($fUsername)));
+	$smarty->assign ('smarty_template', 'admin_list-domain');
 }
-include ("templates/footer.php");
+else
+{
+	$smarty->assign ('select_options', select_options ($list_domains, array ($_GET['domain'])));
+	$smarty->assign ('smarty_template', 'overview-get');
+}
+
+$smarty->display ('index.tpl');
 
 /* vim: set expandtab softtabstop=3 tabstop=3 shiftwidth=3: */
 ?>

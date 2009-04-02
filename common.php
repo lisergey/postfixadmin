@@ -74,4 +74,8 @@ function postfixadmin_autoload($class) {
 }
 spl_autoload_register('postfixadmin_autoload');
 
+//*****
+require_once ("$incpath/smarty.inc.php");
+//*****
 /* vim: set expandtab softtabstop=4 tabstop=4 shiftwidth=4: */
+?>

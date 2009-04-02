@@ -230,14 +230,164 @@ if (isset ($limit)) {
    elseif($limit['mailbox_count'] < $limit['mailboxes']) {
       $tCanAddMailbox = true;
    }
+
+   $limit ['aliases']	= eval_size ($limit ['aliases']);
+   $limit ['mailboxes']	= eval_size ($limit ['mailboxes']);
+   $limit ['maxquota']	= eval_size ($limit ['maxquota']);
 }
 
+$gen_show_status = array ();
+$check_alias_owner = array ();
+
+if ((is_array ($tAlias) and sizeof ($tAlias) > 0))
+	for ($i = 0; $i < sizeof ($tAlias); $i++)
+	{
+		$gen_show_status [$i] = gen_show_status($tAlias[$i]['address']);
+		$check_alias_owner [$i] = check_alias_owner($SESSID_USERNAME, $tAlias[$i]['address']);
+	}
+
+$gen_show_status_mailbox = array ();
+$divide_quota = array ();
+if ((is_array ($tMailbox) and sizeof ($tMailbox) > 0))
+	for ($i = 0; $i < sizeof ($tMailbox); $i++)
+	{
+		$gen_show_status_mailbox [$i] = gen_show_status($tMailbox[$i]['username']);
+		$divide_quota ['current'][$i] = divide_quota ($tMailbox[$i]['current']);
+		$divide_quota ['quota'][$i] = divide_quota ($tMailbox[$i]['quota']);
+	}
+	
+class cNav_bar
+{
+	var $count, $title, $limit, $page_size, $pages;	//* arguments
+	var $url;	//* manually
+	var $fInit, $arr_prev, $arr_next, $arr_top;	//* internal
+	var $anchor;
+	function cNav_bar ($aCount, $aTitle, $aLimit, $aPage_size, $aPages)
+	{
+		$this->count = $aCount;
+		$this->title = $aTitle;
+		$this->limit = $aLimit;
+		$this->page_size = $aPage_size;
+		$this->pages = $aPages;
+		$this->url = '';
+		$this->fInit = false;
+	}
+	function init ()
+	{
+		$this->anchor = 'a'.substr ($this->title, 3);
+		$this->url .= '#'.$this->anchor;
+		($this->limit >= $this->page_size) ? $this->arr_prev = '&nbsp;<a href="?limit='.($this->limit - $this->page_size).$this->url.'"><img border="0" src="images/arrow-l.png" title="'.$GLOBALS ['PALANG']['pOverview_left_arrow'].'" alt="'.$GLOBALS ['PALANG']['pOverview_left_arrow'].'"/></a>&nbsp;' : $this->arr_prev = '';
+		($this->limit > 0) ? $this->arr_top = '&nbsp;<a href="?limit=0'.$this->url.'"><img border="0" src="images/arrow-u.png" title="'.$GLOBALS ['PALANG']['pOverview_up_arrow'].'" alt="'.$GLOABLS ['PALANG']['pOverview_up_arrow'].'"/></a>&nbsp;' : $this->arr_top = '';
+		(($this->limit + $this->page_size) < ($this->count * $this->page_size)) ? $this->arr_next = '&nbsp;<a href="?limit='.($this->limit + $this->page_size).$this->url.'"><img border="0" src="images/arrow-r.png" title="'.$GLOBALS ['PALANG']['pOverview_right_arrow'].'" alt="'.$GLOBALS ['PALANG']['pOverview_right_arrow'].'"/></a>&nbsp;' : $this->arr_next = '';
+		$this->fInit = true;
+	}
+	function display_pre ()
+	{
+		$ret_val = '<div class="nav_bar"';
+//$ret_val .= ' style="background-color:#ffa;"';
+		$ret_val .= '>';
+		$ret_val .= '<table width="730"><colgroup span="1"><col width="550"></col></colgroup> ';
+		$ret_val .= '<tr><td align="left">';
+		return $ret_val;
+	}
+	function display_post ()
+	{
+		$ret_val = '</td></tr></table></div>';
+		return $ret_val;
+	}
+	function display_top ()
+	{
+		$ret_val = '';
+		if ($this->count < 1)
+			return $ret_val;
+		if (!$this->fInit)
+			$this->init ();
+			
+		$ret_val .= '<a name="'.$this->anchor.'"></a>';
+		$ret_val .= $this->display_pre ();
+		$ret_val .= '<b>'.$this->title.'</b>&nbsp;&nbsp;';
+		($this->limit >= $this->page_size) ? $highlight_at = $this->limit / $this->page_size : $highlight_at = 0;
+
+		for ($i = 0; $i < count ($this->pages); $i++)
+		{
+			$lPage = $this->pages [$i];
+			if ($i == $highlight_at)
+				$lPage = '<b>'.$lPage.'</b>';
+			$ret_val .= '<a href="?limit='.($i * $this->page_size).$this->url.'">'.$lPage.'</a>'."\n";
+		}
+		$ret_val .= '</td><td valign="middle" align="right">';
+
+		$ret_val .= $this->arr_prev;
+		$ret_val .= $this->arr_top;
+		$ret_val .= $this->arr_next;
+
+		$ret_val .= $this->display_post ();
+		return $ret_val;
+	}
+	function display_bottom ()
+	{
+		$ret_val = '';
+		if ($this->count < 1)
+			return $ret_val;
+		if (!$this->fInit)
+			$this->init ();
+		$ret_val .= $this->display_pre ();
+		$ret_val .= '</td><td valign="middle" align="right">';
+
+		$ret_val .= $this->arr_prev;
+		$ret_val .= $this->arr_top;
+		$ret_val .= $this->arr_next;
+
+		$ret_val .= $this->display_post ();
+		return $ret_val;
+	}
+}
+
+$nav_bar_alias = new cNav_bar ($limit['alias_pgindex_count'], $PALANG['pOverview_alias_title'], $fDisplay, $CONF['page_size'], $limit['alias_pgindex']);
+$nav_bar_alias->url = '&amp;domain='.$fDomain;
+
+$nav_bar_mailbox = new cNav_bar ($limit['mbox_pgindex_count'], $PALANG['pOverview_mailbox_title'], $fDisplay, $CONF['page_size'], $limit['mbox_pgindex']);
+$nav_bar_mailbox->url = '&amp;domain='.$fDomain;
+//print $nav_bar_alias->display_top ();
+
+	
 // this is why we need a proper template layer.
 $fDomain = htmlentities($fDomain, ENT_QUOTES);
-include ("templates/header.php");
-include ("templates/menu.php");
-include ("templates/list-virtual.php");
-include ("templates/footer.php");
+
+$smarty->assign ('select_options', select_options ($list_domains, array ($fDomain)));
+$smarty->assign ('nav_bar_alias', array ('top' => $nav_bar_alias->display_top (), 'bottom' => $nav_bar_alias->display_bottom ()));
+$smarty->assign ('nav_bar_mailbox', array ('top' => $nav_bar_mailbox->display_top (), 'bottom' => $nav_bar_mailbox->display_bottom ()));
+
+$smarty->assign ('fDomain', $fDomain);
+
+$smarty->assign ('list_domains', $list_domains);
+$smarty->assign ('limit', $limit);
+$smarty->assign ('tDisplay_back_show', $tDisplay_back_show);
+$smarty->assign ('tDisplay_back', $tDisplay_back);
+$smarty->assign ('tDisplay_up_show', $tDisplay_up_show);
+$smarty->assign ('tDisplay_next_show', $tDisplay_next_show);
+$smarty->assign ('tDisplay_next', $tDisplay_next);
+
+if(sizeof ($tAliasDomains) > 0)
+	$smarty->assign ('tAliasDomains', $tAliasDomains);
+
+if(is_array($tTargetDomain))
+{
+	$smarty->assign ('tTargetDomain', $tTargetDomain);
+	$smarty->assign ('PALANG_pOverview_alias_domain_target', sprintf($PALANG['pOverview_alias_domain_target'], $fDomain));
+}
+$smarty->assign ('tAlias', $tAlias);
+$smarty->assign ('gen_show_status', $gen_show_status);
+$smarty->assign ('check_alias_owner', $check_alias_owner);
+$smarty->assign ('tCanAddAlias', $tCanAddAlias);
+$smarty->assign ('tMailbox', $tMailbox);
+$smarty->assign ('gen_show_status_mailbox', $gen_show_status_mailbox);
+$smarty->assign ('boolconf_used_quotas', boolconf('used_quotas'));
+$smarty->assign ('divide_quota', $divide_quota);
+$smarty->assign ('tCanAddMailbox', $tCanAddMailbox);
+$smarty->assign ('smarty_template', 'list-virtual');
+$smarty->display ('index.tpl');
+
 
 /* vim: set expandtab softtabstop=3 tabstop=3 shiftwidth=3: */
 ?>
