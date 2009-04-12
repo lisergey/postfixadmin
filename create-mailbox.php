@@ -203,69 +203,13 @@ if ($_SERVER['REQUEST_METHOD'] == "POST")
          $tMessage = $PALANG['pAlias_result_error'] . "<br />($fUsername -> $fUsername)</br />";
       }
 
-/*
-# TODO: The following code segment is from admin/create-mailbox.php. To be compared/merged with the code from /create-mailbox.php.
-        Lines starting with /* were inserted to keep this section in commented mode.
-
-
-      if ($result['rows'] != 1)
-      {
-         $tDomain = $fDomain;
-         $tMessage .= $PALANG['pCreate_mailbox_result_error'] . "<br />($fUsername)<br />";
-      }
-      else
-      {
-
-         $error=TRUE; // Being pessimistic
-         if (mailbox_postcreation($fUsername,$fDomain,$maildir))
-         {
-            if ('pgsql'==$CONF['database_type'])
-            {
-               $result=db_query("COMMIT");
-
-/* should really not be possible: */
-/* 
-               if (!$result) die('COMMIT-query failed.');
-            }
-            $error=FALSE;
-         } else {
-            $tMessage .= $PALANG['pCreate_mailbox_result_error'] . "<br />($fUsername)<br />";
-            if ('pgsql'==$CONF['database_type'])
-            {
-               $result=db_query("ROLLBACK");
-
-/* should really not be possible: */
-/*
-               if (!$result) die('ROLLBACK-query failed.');
-            } else {
-               /*
-                  When we cannot count on transactions, we need to move forward, despite
-                  the problems.
- */
-/*
-               $error=FALSE;
-            }
-         }
-
-
-         if (!$error)
-         {
-            db_log ($CONF['admin_email'], $fDomain, 'create_mailbox', $fUsername);
-
- */
-
-/*
-TODO: this is the start of /create-mailbox code segment that was originally used in /create-mailbox.php instead 
-      of the above from admin/create-mailbox.php.
-      To be compared / merged.
- */
-
       // apparently uppercase usernames really confuse some IMAP clients.
       $fUsername = strtolower($fUsername);
       $local_part = '';
       if(preg_match('/^(.*)@/', $fUsername, $matches)) {
           $local_part = $matches[1];
       }
+
       $result = db_query ("INSERT INTO $table_mailbox (username,password,name,maildir,local_part,quota,domain,created,modified,active) VALUES ('$fUsername','$password','$fName','$maildir','$local_part','$quota','$fDomain',NOW(),NOW(),'$sqlActive')");
       if ($result['rows'] != 1 || !mailbox_postcreation($fUsername,$fDomain,$maildir, $quota))
       {
@@ -277,9 +221,6 @@ TODO: this is the start of /create-mailbox code segment that was originally used
       {
          db_query('COMMIT');
          db_log ($SESSID_USERNAME, $fDomain, 'create_mailbox', "$fUsername");
-/*
-TODO: this is the end of /create-mailbox.php code segment
- */
       $tDomain = $fDomain;
 
       $tQuota = $CONF['maxquota'];

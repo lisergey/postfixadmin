@@ -34,6 +34,10 @@ require_once('common.php');
 authentication_require_role('admin');
 $SESSID_USERNAME = authentication_get_username();
 
+if($CONF['alias_control_admin'] == 'NO' && !authentication_has_role('global-admin')) {
+   die("Check config.inc.php - domain administrators do not have the ability to edit user's aliases (alias_control_admin)");
+}
+
 if ($_SERVER['REQUEST_METHOD'] == "GET")
 {
    if (isset ($_GET['address'])) $fAddress = escape_string ($_GET['address']);
@@ -46,6 +50,9 @@ if ($_SERVER['REQUEST_METHOD'] == "GET")
       {
          $row = db_array ($result['result']);
          $tGoto = $row['goto'];
+			
+		 //. if we are not a global admin, and special_alias_control is NO, hide the alias that's the mailbox name.
+		 if($CONF['special_alias_control'] == 'NO' && !authentication_has_role('global-admin')) {
 
          /* Has a mailbox as well? Remove the address from $tGoto in order to edit just the real aliases */
          $result = db_query ("SELECT * FROM $table_mailbox WHERE username='$fAddress' AND domain='$fDomain'");
@@ -53,7 +60,8 @@ if ($_SERVER['REQUEST_METHOD'] == "GET")
          {
             $tGoto = preg_replace ('/\s*,*\s*' . $fAddress . '\s*,*\s*/', '', $tGoto);
          }
-      }
+		 }
+	  }
    }
    else
    {
@@ -90,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST")
    $goto = preg_replace ('/,*$|^,*/', '', $goto);
    $goto = preg_replace ('/,,*/', ',', $goto);
 
-   if (empty ($goto))
+   if (empty ($goto) && !authentication_has_role('global-admin'))
    {
       $error = 1;
       $tGoto = $_POST['fGoto'];
@@ -121,11 +129,20 @@ if ($_SERVER['REQUEST_METHOD'] == "POST")
    /* The alias has a real mailbox as well, prepend $goto with it */
    if ($result['rows'] == 1)
    {
-      $goto = "$fAddress,$goto";
+      // ensure mailbox alias exists... if they're a domain admin, and they're not allowed to...
+	  if($CONF['alias_control_admin'] == 'NO' && !authentication_has_role('global-admin')) {
+		  $array[] = $fAddress;
+	  }
+
    }
+   // duplicates suck, mmkay..
+   $array = array_unique($array);
+
+   $goto = implode(',', $array);
 
    if ($error != 1)
    {
+	  $goto = escape_string($goto);
       $result = db_query ("UPDATE $table_alias SET goto='$goto',modified=NOW() WHERE address='$fAddress' AND domain='$fDomain'");
       if ($result['rows'] != 1)
       {

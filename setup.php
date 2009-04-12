@@ -23,10 +23,7 @@
  * Form POST \ GET Variables: -none-
  */
 
-define('POSTFIXADMIN', 1); # checked in included files
-
-require_once("languages/en.lang");
-require_once("functions.inc.php");
+require_once("common.php");
 
 $CONF['show_header_text'] = 'NO';
 $CONF['theme_logo'] = 'images/logo-default.png';
@@ -309,6 +306,17 @@ else
 
    if ($_SERVER['REQUEST_METHOD'] == "POST")
    {
+	   // ensure password is correct.
+       if(!isset($_POST['setup_password'])) {
+          $error += 1;
+          $tMessage = "Setup password must be specified";
+       }
+       if($_POST['setup_password'] != $CONF['setup_password']) {
+          $error += 1;
+          $tMessage = "Setup password not specified correctly";
+       }
+
+      if($error == 0) {
       if (isset ($_POST['fUsername'])) $fUsername = escape_string ($_POST['fUsername']);
       if (isset ($_POST['fPassword'])) $fPassword = escape_string ($_POST['fPassword']);
       if (isset ($_POST['fPassword2'])) $fPassword2 = escape_string ($_POST['fPassword2']);
@@ -325,8 +333,12 @@ else
          if (isset ($_POST['fUsername'])) $tUsername = escape_string ($_POST['fUsername']);
       } else {
          print "<p><b>$tMessage</b></p>";
-		 echo "<p><b>Delete (or rename) setup.php, and then click <a href='login.php'>here to login</a>.</b></p>";
       }
+   }
+      else {
+          print "<p><b>$tMessage</b></p>";
+      }
+
    }
 
    if ($_SERVER['REQUEST_METHOD'] == "GET" || $error != 0)
@@ -338,6 +350,11 @@ else
 <table>
    <tr>
       <td colspan="3"><h3>Create superadmin account</h3></td>
+   </tr>
+   <tr>
+      <td>Setup password (see config.inc.php)</td>
+      <td><input class="flat" type="password" name="setup_password" value="" /></td>
+      <td></td>
    </tr>
    <tr>
       <td><?php print $PALANG['pAdminCreate_admin_username'] . ":"; ?></td>
@@ -367,8 +384,8 @@ else
       <?php
    }
 
-   print "<b>Make sure you delete this setup.php file!</b><br />\n";
-   print "Also check the config.inc.php file for any settings that you might need to change!<br />\n";
+   print "<b>Since version 2.3 there is no requirement to delete setup.php!</b><br />\n";
+   print "<b>Check the config.inc.php file for any other settings that you might need to change!<br />\n";
 }
 ?>
 </div>
