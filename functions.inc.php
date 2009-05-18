@@ -22,7 +22,7 @@ if (ereg ("functions.inc.php", $_SERVER['PHP_SELF']))
     exit;
 }
 
-$version = '2.3 rc2';
+$version = '2.3 rc4';
 
 /**
  * check_session
@@ -431,13 +431,7 @@ function get_domain_properties ($domain)
     global $table_alias, $table_mailbox, $table_domain;
     $list = array ();
 
-   $result = db_query ("SELECT COUNT(*) FROM $table_alias
-                        LEFT JOIN $table_mailbox ON $table_alias.address=$table_mailbox.username
-                        WHERE ($table_alias.domain='$domain' AND $table_mailbox.maildir IS NULL)
-                              OR
-                              ($table_alias.domain='$domain'
-                               AND $table_alias.goto LIKE '%,%'
-                               AND $table_mailbox.maildir IS NOT NULL)");
+   $result = db_query ("SELECT COUNT(*) FROM $table_alias WHERE domain='$domain'");
 
    $row = db_row ($result['result']);
    $list['alias_count'] = $row[0];
@@ -449,7 +443,7 @@ function get_domain_properties ($domain)
    $result = db_query ("SELECT SUM(quota) FROM $table_mailbox WHERE domain='$domain'");
    $row = db_row ($result['result']);
    $list['quota_sum'] = $row[0];
-   $list['alias_count'] = $list['alias_count'];
+   $list['alias_count'] = $list['alias_count'] - $list['mailbox_count'];
 
     $list['alias_pgindex']=array ();
     $list['mbox_pgindex']=array ();
@@ -471,10 +465,6 @@ function get_domain_properties ($domain)
                    FROM $table_alias
                    LEFT JOIN $table_mailbox ON $table_alias.address=$table_mailbox.username
                    WHERE ($table_alias.domain='$domain' AND $table_mailbox.maildir IS NULL)
-                        OR
-                         ($table_alias.domain='$domain'
-                          AND $table_alias.goto LIKE '%,%'
-                          AND $table_mailbox.maildir IS NOT NULL)
                    ORDER BY $table_alias.address LIMIT $limitSql";
          $result = db_query ("$query");
          $row = db_array ($result['result']);
@@ -487,10 +477,6 @@ function get_domain_properties ($domain)
                    FROM $table_alias
                    LEFT JOIN $table_mailbox ON $table_alias.address=$table_mailbox.username
                    WHERE ($table_alias.domain='$domain' AND $table_mailbox.maildir IS NULL)
-                        OR
-                         ($table_alias.domain='$domain'
-                          AND $table_alias.goto LIKE '%,%'
-                          AND $table_mailbox.maildir IS NOT NULL)
                    ORDER BY $table_alias.address LIMIT $limitSql";
          $result = db_query ("$query");
          $row = db_array ($result['result']);
@@ -2140,7 +2126,13 @@ function gen_show_status ($show_alias)
         while ( ($g=array_pop($gotos)) && $stat_ok )
         {
             $stat_catchall = substr($g,strpos($g,"@"));
-            $stat_result = db_query ("SELECT address FROM $table_alias WHERE address = '$g' OR address = '$stat_catchall'");
+            $stat_delimiter = "";
+			if (!empty($CONF['recipient_delimiter'])) {
+				$delimiter = preg_quote($CONF['recipient_delimiter'], "/");
+				$stat_delimiter = preg_replace('/' .$delimiter. '[^' .$delimiter. ']*@/', "@", $g);
+				$stat_delimiter = "OR address = '$stat_delimiter'";
+			}
+			$stat_result = db_query ("SELECT address FROM $table_alias WHERE address = '$g' OR address = '$stat_catchall' $stat_delimiter");
             if ($stat_result['rows'] == 0)
             {
                 $stat_ok = 0;
@@ -2183,8 +2175,15 @@ function gen_show_status ($show_alias)
     // POP/IMAP CHECK
     if ( $CONF['show_popimap'] == 'YES' )
     {
+		 $stat_delimiter = "";
+		 if (!empty($CONF['recipient_delimiter'])) {
+			 $delimiter = preg_quote($CONF['recipient_delimiter'], "/");
+			 $stat_delimiter = preg_replace('/' .$delimiter. '[^' .$delimiter. '@]*@/', "@", $stat_goto);
+			 $stat_delimiter = ',' . $stat_delimiter;
+		 }
+
         //if the address passed in appears in its own goto field, its POP/IMAP
-        if ( preg_match ('/,' . $show_alias . ',/', ',' . $stat_goto . ',') )
+         if ( preg_match ('/,' . $show_alias . ',/', ',' . $stat_goto . $stat_delimiter . ',') )
         {
             $stat_string .= "<span  style='background-color:" . $CONF['show_popimap_color'] .
                 "'>" . $CONF['show_status_text'] . "</span>&nbsp;";

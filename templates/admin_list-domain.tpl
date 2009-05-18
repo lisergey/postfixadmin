@@ -23,7 +23,7 @@
 		</tr>
 {foreach from=$domain_properties item=domain }
 		{#tr_hilightoff#}
-			<td><a href="{#url_list_virtual#}?domain={$domain.name|escape:"url"}">{$domain.name}</a></td>
+			<td><a href="{#url_list_virtual#}?domain={$domain.domain|escape:"url"}">{$domain.domain}</a></td>
 			<td>{$domain.description}</td>
 			<td>{$domain.alias_count} / {$domain.aliases}</td>
 			<td>{$domain.mailbox_count} / {$domain.mailboxes}</td>
@@ -31,9 +31,9 @@
 			{if $CONF.transport===YES}<td>{$domain.transport}</td>{/if}
 			<td>{$domain.backupmx}</td>
 			<td>{$domain.modified}</td>
-			<td><a href="{#url_edit_active_domain#}?domain={$domain.name|escape:"url"}">{$domain.active}</a></td>
-			<td><a href="{#url_edit_domain#}?domain={$domain.name|escape:"url"}">{$PALANG.edit}</a></td>
-			<td><a href="{#url_delete#}?table=domain&amp;delete={$domain.name|escape:"url"}" onclick="return confirm ('{$PALANG.confirm_domain}{$PALANG.pAdminList_admin_domain}: {$domain.name}')">{$PALANG.del}</a></td>
+			<td><a href="{#url_edit_active_domain#}?domain={$domain.domain|escape:"url"}">{$domain.active}</a></td>
+			<td><a href="{#url_edit_domain#}?domain={$domain.domain|escape:"url"}">{$PALANG.edit}</a></td>
+			<td><a href="{#url_delete#}?table=domain&amp;delete={$domain.domain|escape:"url"}" onclick="return confirm ('{$PALANG.confirm_domain}{$PALANG.pAdminList_admin_domain}: {$domain.domain}')">{$PALANG.del}</a></td>
 		</tr>
 {/foreach}
 	</table>

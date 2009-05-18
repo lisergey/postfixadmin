@@ -31,7 +31,9 @@ if (ereg ("config.inc.php", $_SERVER['PHP_SELF']))
  */
 $CONF['configured'] = false;
 
-// In order to setup Postfixadmin, you MUST change the password below.
+// In order to setup Postfixadmin, you MUST specify a hashed password here.
+// To create the hash, visit setup.php in a browser and type a password into the field,
+// on submission it will be echoed out to you as a hashed value.
 $CONF['setup_password'] = 'changeme';
 // Postfix Admin Path
 // Set the location of your Postfix Admin installation here.
@@ -298,7 +300,10 @@ $CONF['show_popimap_color']='darkgrey';
 // - add the corresponding color to show_custom_colors
 $CONF['show_custom_domains']=array("subdomain.domain.ext","domain2.ext");
 $CONF['show_custom_colors']=array("lightgreen","lightblue");
-
+// If you use a recipient_delimiter in your postfix config, you can also honor it when aliases are checked.
+// Example: $CONF['recipient_delimiter'] = "+";
+// Set to "" to disable this check.
+$CONF['recipient_delimiter'] = "";
 
 // Optional:
 // Script to run after creation of mailboxes.
@@ -379,7 +384,7 @@ $CONF['theme_css'] = 'css/default.css';
 // that future updates work without problems, you can use a separate config 
 // file (config.local.php) instead of editing this file and override some
 // settings there.
-if (file_exists(dirname(__FILE__) . '/config.local.php')) { # for /
+if (file_exists(dirname(__FILE__) . '/config.local.php')) {
     include(dirname(__FILE__) . '/config.local.php');
 }
 

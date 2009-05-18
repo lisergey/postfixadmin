@@ -31,15 +31,11 @@
 require_once('common.php');
 
 # force user to delete setup.php (allows creation of superadmins!)
-if (isset($CONF['configured']) && $CONF['configured'] == 'I_know_the_risk_of_not_deleting_setup.php') {
-    }
-    else
-    {
-      if($CONF['configured'] !== true) {
+    if($CONF['configured'] !== true) {
       print "Installation not yet configured; please edit config.inc.php";
 	  exit;
     }
-}
+
 	$smarty->assign ('language_selector', language_selector());
 
 if ($_SERVER['REQUEST_METHOD'] == "GET")
