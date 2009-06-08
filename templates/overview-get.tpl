@@ -19,7 +19,7 @@
 	</tr>
 {foreach from=$domain_properties item=domain }
 		{#tr_hilightoff#}
-			<td><a href="{#url_list_virtual#}?domain={$domain.name|escape:"url"}">{$domain.name}</a></td>
+			<td><a href="{#url_list_virtual#}?domain={$domain.domain|escape:"url"}">{$domain.domain}</a></td>
 			<td>{$domain.alias_count} / {$domain.aliases}</td>
 			<td>{$domain.mailbox_count} / {$domain.mailboxes}</td>
 			{if $CONF.quota===YES}<td>{$domain.maxquota}</td>{/if}

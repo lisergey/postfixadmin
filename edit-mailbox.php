@@ -176,6 +176,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST")
 }
 
 $smarty->assign ('fUsername', $fUsername);
+$smarty->assign ('fPassword', $user_details ['password']);
 //$smarty->assign ('pEdit_mailbox_username_text', $pEdit_mailbox_username_text);
 $smarty->assign ('pEdit_mailbox_password_text', $pEdit_mailbox_password_text);
 $smarty->assign ('tName', htmlspecialchars ($tName,ENT_QUOTES));
@@ -187,6 +188,5 @@ if ($tActive)	$smarty->assign ('tActive', ' checked="checked"');
 $smarty->assign ('tMessage', $tMessage);
 $smarty->assign ('smarty_template', 'edit-mailbox');
 $smarty->display ('index.tpl');
-
 /* vim: set expandtab softtabstop=3 tabstop=3 shiftwidth=3: */
 ?>

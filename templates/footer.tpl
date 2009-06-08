@@ -27,6 +27,7 @@
 
 $smarty->assign ('PALANG_pFooter_logged_as', sprintf($PALANG['pFooter_logged_as'], authentication_get_username()));
 {php}
+print_r ($_SESSION);
 //phpinfo ();
 {/php}
 </pre>

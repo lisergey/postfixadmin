@@ -30,6 +30,7 @@ require_once('common.php');
 authentication_require_role('admin');
 
 if (authentication_has_role('global-admin')) {
+//if (authentication_has_role('admin')) {
    $list_admins = list_admins ();
    $is_superadmin = 1;
    $fUsername = safepost('fUsername', safeget('username')); # prefer POST over GET variable

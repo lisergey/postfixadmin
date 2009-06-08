@@ -382,9 +382,15 @@ $smarty->assign ('gen_show_status_mailbox', $gen_show_status_mailbox);
 $smarty->assign ('boolconf_used_quotas', boolconf('used_quotas'));
 $smarty->assign ('divide_quota', $divide_quota);
 $smarty->assign ('tCanAddMailbox', $tCanAddMailbox);
+if (isset ($_GET ['tab']))
+	$_SESSION ['tab'] = $_GET ['tab'];
+//if (empty ($_GET ['tab']))
+//	unset ($_SESSION ['tab']);
+if (!isset ($_SESSION ['tab']))
+		$_SESSION ['tab'] = 'mailbox';
+$smarty->assign ('tab', $_SESSION ['tab']);
 $smarty->assign ('smarty_template', 'list-virtual');
 $smarty->display ('index.tpl');
-
 
 /* vim: set expandtab softtabstop=4 tabstop=4 shiftwidth=4: */
 ?>

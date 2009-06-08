@@ -12,42 +12,55 @@
 <p>{$PALANG.pOverview_alias_mailbox_count}: {$limit.mailbox_count} / {$limit.mailboxes}</p>
 {#form_search#}
 </div>
-
+<div id="tabbar">
+<ul>
+<li><a href="?domain={$smarty.get.domain}&tab=mailbox">{$PALANG.pOverview_mailbox_title}</a></li>
+<li><a href="?domain={$smarty.get.domain}&tab=alias">{$PALANG.pOverview_alias_title}</a></li>
+{if $boolconf_alias_domain}
+	<li><a href="?domain={$smarty.get.domain}&tab=alias_domain">{$PALANG.pOverview_alias_domain_title}</a></li>
+{/if}
+</ul>
+</div>
+<br clear="all"/><br/>
 {*** Domain Aliases ***}
 {if $boolconf_alias_domain}
-	{include file="list-virtual_alias_domain.tpl"}
+	{if $tab=='alias_domain'}
+		{include file="list-virtual_alias_domain.tpl"}
+	{/if}
 {/if}
 {*** Aliases ***}
-{$nav_bar_alias.top}
-<table id="alias_table">
-	<tr>
-		<td colspan="7"><h3>{$PALANG.pOverview_alias_title}</h3></td>
-	</tr>
-{if $tAlias}
-	{include file="list-virtual_alias.tpl"}
+{if $tab=='alias'}
+	{$nav_bar_alias.top}
+	<table id="alias_table">
+		<tr>
+			<td colspan="7"><h3>{$PALANG.pOverview_alias_title}</h3></td>
+		</tr>
+	{if $tAlias}
+		{include file="list-virtual_alias.tpl"}
+	{/if}
+	</table>
+	{$nav_bar_alias.bottom}
+	{if $tCanAddAlias}
+		<p><a href="create-alias.php?domain={$fDomain|escape:"url"}">{$PALANG.pMenu_create_alias}</a></p>
+	{/if}
 {/if}
-</table>
-{$nav_bar_alias.bottom}
-
-{if $tCanAddAlias}
-	<p><a href="create-alias.php?domain={$fDomain|escape:"url"}">{$PALANG.pMenu_create_alias}</a></p>
-{/if}
-
-{$nav_bar_mailbox.top}
-{assign var="colspan" value=8}
-{if $CONF.vacation_control_admin===YES}{assign var="colspan" value="`$colspan+1`"}{/if}
-{if $CONF.alias_control_admin===YES}{assign var="colspan" value="`$colspan+1`"}{/if}
-<table id="mailbox_table">
-	<tr>
-		<td colspan="{$colspan}"><h3>{$PALANG.pOverview_mailbox_title}</h3></td>
-	</tr>
-{if $tMailbox}
-	{include file="list-virtual_mailbox.tpl"}
-{else}</table>
-{/if}
-{$nav_bar_mailbox.bottom}
-{if $tCanAddMailbox}
-	<p><a href="create-mailbox.php?domain={$fDomain|escape:"url"}">{$PALANG.pMenu_create_mailbox}</a></p>
+{if $tab=='mailbox'}
+	{$nav_bar_mailbox.top}
+	{assign var="colspan" value=8}
+	{if $CONF.vacation_control_admin===YES}{assign var="colspan" value="`$colspan+1`"}{/if}
+	{if $CONF.alias_control_admin===YES}{assign var="colspan" value="`$colspan+1`"}{/if}
+	<table id="mailbox_table">
+		<tr>
+			<td colspan="{$colspan}"><h3>{$PALANG.pOverview_mailbox_title}</h3></td>
+		</tr>
+	{if $tMailbox}
+		{include file="list-virtual_mailbox.tpl"}
+	{else}</table>
+	{/if}
+	{$nav_bar_mailbox.bottom}
+	{if $tCanAddMailbox}
+		<p><a href="create-mailbox.php?domain={$fDomain|escape:"url"}">{$PALANG.pMenu_create_mailbox}</a></p>
+	{/if}
 {/if}
 {if $CONF.show_status===YES && $CONF.show_status_key===YES}
 	<br/><br/>
