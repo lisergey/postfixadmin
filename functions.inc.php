@@ -16,13 +16,7 @@
  * Contains re-usable code.
  */
 
-if (ereg ("functions.inc.php", $_SERVER['PHP_SELF']))
-{  
-    header ("Location: login.php");
-    exit;
-}
-
-$version = '2.3 rc5';
+$version = '2.3 rc7';
 
 /**
  * check_session
@@ -1142,9 +1136,9 @@ function pacrypt ($pw, $pw_db="")
     }
 
     elseif ($CONF['encrypt'] == 'system') {
-        if (ereg ("\$1\$", $pw_db)) {
+        if (preg_match("/\\$1\\$/", $pw_db)) {
             $split_salt = preg_split ('/\$/', $pw_db);
-            $salt = $split_salt[2];
+            $salt = "\$1\$${split_salt[2]}\$";
         }
         else {
             if (strlen($pw_db) == 0) {
@@ -1178,7 +1172,7 @@ function pacrypt ($pw, $pw_db="")
     elseif ($CONF['encrypt'] == 'authlib') {
         $flavor = $CONF['authlib_default_flavor'];
         $salt = substr(create_salt(), 0, 2); # courier-authlib supports only two-character salts
-        if(ereg('^{.*}', $pw_db)) {
+        if(preg_match('/^{.*}/', $pw_db)) {
             // we have a flavor in the db -> use it instead of default flavor
             $result = split('{|}', $pw_db, 3);
             $flavor = $result[1];  
@@ -1191,8 +1185,10 @@ function pacrypt ($pw, $pw_db="")
             $password = '{' . $flavor . '}' . base64_encode(md5($pw, TRUE));
         } elseif(stripos($flavor, 'crypt') === 0) {
             $password = '{' . $flavor . '}' . crypt($pw, $salt);
+		} elseif(stripos($flavor, 'SHA') === 0) {
+			$password = '{' . $flavor . '}' . base64_encode(sha1($pw, TRUE));
         } else {
-            die("authlib_default_flavor '" . $flavor . "' unknown. Valid flavors are 'md5raw', 'md5' and 'crypt'");
+            die("authlib_default_flavor '" . $flavor . "' unknown. Valid flavors are 'md5raw', 'md5', 'SHA' and 'crypt'");
         }
     }
     
@@ -1519,9 +1515,9 @@ function db_get_boolean($bool) {
     if($CONF['database_type']=='pgsql') {
         // return either true or false (unquoted strings)
         if($bool) {
-            return 'true';
+            return 't';
         }  
-        return 'false';
+        return 'f';
     }
     elseif($CONF['database_type'] == 'mysql' || $CONF['database_type'] == 'mysqli') {
         if($bool) {
@@ -1561,7 +1557,7 @@ function db_query ($query, $ignore_errors = 0)
     if ($error_text != "" && $ignore_errors == 0) die($error_text);
 
     if ($error_text == "") {
-        if (eregi ("^SELECT", $query))
+        if (preg_match("/^SELECT/i", $query))
         {
             // if $query was a SELECT statement check the number of rows with [database_type]_num_rows ().
             if ($CONF['database_type'] == "mysql") $number_rows = mysql_num_rows ($result);

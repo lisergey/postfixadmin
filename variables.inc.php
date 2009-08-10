@@ -17,11 +17,6 @@
  *
  * XXX Probably a hack to save having to declare variables before using them in pages.
  */
-if (ereg ("variables.inc.php", $_SERVER['PHP_SELF']))
-{
-    header ("Location: login.php");
-    exit;
-}
 
 $error = "";
 $escaped_string = "";

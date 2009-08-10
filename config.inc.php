@@ -16,12 +16,6 @@
  * Contains configuration options.
  */
 
-if (ereg ("config.inc.php", $_SERVER['PHP_SELF']))
-{
-   header ("Location: login.php");
-   exit;
-}
-
 /*****************************************************************
  *  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
  * The following line needs commenting out or removing before the
@@ -176,7 +170,7 @@ $CONF['transport_default'] = 'virtual';
 
 // Virtual Vacation
 // If you want to use virtual vacation for you mailbox users set this to 'YES'.
-// NOTE: Make sure that you install the vacation module. http://high5.net/postfixadmin/
+// NOTE: Make sure that you install the vacation module. (See VIRTUAL-VACATION/)
 $CONF['vacation'] = 'NO';
 // This is the autoreply domain that you will need to set in your Postfix
 // transport maps to handle virtual vacations. It does not need to be a

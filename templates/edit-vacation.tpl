@@ -4,6 +4,8 @@
 		window.location="{/literal}{$fCanceltarget}{literal}"
 	}
 	</script>
+	<script language="JavaScript" src="calendar.js"></script>
+	<link rel="stylesheet" href="css/calendar.css">
 {/literal}
 <div id="edit_form">
 <form name="edit-vacation" method="post" action=''>
@@ -14,6 +16,34 @@
 	<tr>
 		<td>{$PALANG.pUsersLogin_username}:</td>
 		<td>{$tUseremail}</td>
+		<td>&nbsp;</td>
+	</tr>
+	<tr>
+		<td>{$PALANG.pUsersVacation_activefrom}:</td>
+		<td><input name="activefrom" value="{$tActiveFrom}" readonly="readonly" style="background:#eee;"/>
+{literal}
+<script language="JavaScript">
+	new tcal ({
+		'formname': 'edit-vacation',
+		'controlname': 'activefrom'
+	});
+</script>
+{/literal}
+		</td>
+		<td>&nbsp;</td>
+	</tr>
+	<tr>
+		<td>{$PALANG.pUsersVacation_activeuntil}:</td>
+		<td><input name="activeuntil" value="{$tActiveUntil}" readonly="readonly" style="background:#eee;"/>
+{literal}
+<script language="JavaScript">
+	new tcal ({
+		'formname': 'edit-vacation',
+		'controlname': 'activeuntil'
+	});
+</script>
+{/literal}
+		</td>
 		<td>&nbsp;</td>
 	</tr>
 	<tr>
