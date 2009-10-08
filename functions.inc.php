@@ -781,8 +781,8 @@ function list_domains_for_admin ($username)
     $query = "SELECT $table_domain.domain, $table_domain_admins.username FROM $table_domain 
         LEFT JOIN $table_domain_admins ON $table_domain.domain=$table_domain_admins.domain 
         WHERE $table_domain_admins.username='$username' 
-        AND $table_domain.active=$active_sql 
-        AND $table_domain.backupmx=$backupmx_sql 
+        AND $table_domain.active='$active_sql'
+        AND $table_domain.backupmx='$backupmx_sql'
         ORDER BY $table_domain_admins.domain";
 
     $result = db_query ($query);
@@ -1462,7 +1462,10 @@ function db_connect ($ignore_errors = 0)
     {
         if (function_exists ("pg_pconnect"))
         {
-            $connect_string = "host=" . $CONF['database_host'] . " dbname=" . $CONF['database_name'] . " user=" . $CONF['database_user'] . " password=" . $CONF['database_password'];
+			if(!isset($CONF['database_port'])) {
+				$CONF['database_port'] = '5432';
+			}
+            $connect_string = "host=" . $CONF['database_host'] . " port=" . $CONF['database_port'] . " dbname=" . $CONF['database_name'] . " user=" . $CONF['database_user'] . " password=" . $CONF['database_password'];
             $link = @pg_pconnect ($connect_string) or $error_text .= ("<p />DEBUG INFORMATION:<br />Connect: failed to connect to database. $DEBUG_TEXT");
             if ($link) pg_set_client_encoding($link, 'UNICODE');
         }

@@ -4,13 +4,13 @@
  *
  * Usage example:
  * require_once('Zend/XmlRpc/Client.php');
- * $xmlrpc = new Zend_XmlRpc_Client('http://server/xmlrpc.php');
+ * $xmlrpc = new Zend_XmlRpc_Client('https://server/xmlrpc.php');
  *
  * $http_client = $xmlrpc->getHttpClient();
  * $http_client->setCookieJar();
  *
  * $login_object = $xmlrpc->getProxy('login');
- * $success = $login_object->login($username, $password);
+ * $success = $login_object->login($email_address, $password);
  *
  * if($success) {
  *     echo "We're logged in";
@@ -22,7 +22,7 @@
  * $alias = $xmlrpc->getProxy('alias');
  * $vacation = $xmlrpc->getProxy('vacation');
  *
- * if($vacation->isEnabled()) {
+ * if($vacation->checkVacation()) {
  *     echo "Vacation turned on for user";
  * }
  *
@@ -31,6 +31,10 @@
  * this XMLRPC interface will not work.
  */
 require_once(dirname(__FILE__) . '/common.php');
+
+if($CONF['xmlrpc_enabled'] == false) {
+    die("xmlrpc support disabled");
+}
 
 require_once('Zend/XmlRpc/Server.php');
 $server = new Zend_XmlRpc_Server();
