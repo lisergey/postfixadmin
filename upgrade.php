@@ -1096,3 +1096,4 @@ function upgrade_730_mysql() {
        db_query_parsed("ALTER TABLE $table_vacation add activeuntil datetime default NULL");
     }
 }
+
