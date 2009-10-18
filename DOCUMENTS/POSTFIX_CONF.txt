@@ -35,6 +35,36 @@ This isn't necessarily all you need to do to Postfix to get up and
 running.  Also, additional changes are needed for the vacation
 autoreply features.
 
+You can use Postxadmin to control Access maps as well. 
+They consist of a pair <value>,<action>. E.g. you could force a
+helo string to pass or be blocked by Postfixor easily deny a range
+of IP addresses:
+
+some.annoying.sender.com	REJECT
+
+These apply to users, etc. as well. In the future Postfixadmin will be able
+to control these actions from the web interface.
+
+To add functionality, add the following lines to your main.cf:
+
+smtpd_client_restrictions =
+	<your existing values>
+        check_client_access proxy:mysql:/etc/postfix/mysql_users_clientaccess.cf,
+        permit
+
+smtpd_helo_restrictions =
+	<your existing values>
+	check_helo_access proxy:mysql:/etc/postfix/mysql_users_heloaccess.cf,
+        permit
+
+smtpd_recipient_restrictions    =
+	<your existing values>
+	check_sender_access proxy:mysql:/etc/postfix/mysql_users_fromaccess.cf
+        check_recipient_access proxy:mysql:/etc/postfix/mysql_users_rcptaccess.cf
+        check_client_access proxy:mysql:/etc/postfix/mysql_users_clientaccess.cf
+        permit
+
+
 -------------------------
 
   Contents of the files
@@ -108,6 +138,45 @@ password = password
 hosts = localhost
 dbname = postfix
 query = SELECT quota FROM mailbox WHERE username='%s' AND active = '1'
+
+
+# For Access list support
+
+mysql_users_clientaccess.cf:
+user = postfix
+password = password
+hosts = localhost
+dbname = postfix
+query = SELECT action FROM client_access WHERE client='%s'
+
+mysql_users_fromaccess.cf:
+user = postfix
+password = password
+hosts = localhost
+dbname = postfix
+query = SELECT action FROM from_access WHERE from_access='%s'
+
+mysql_users_heloaccess.cf:
+user = postfix
+password = password
+hosts = localhost
+dbname = postfix
+query = SELECT action FROM helo_access WHERE helo='%s'
+
+mysql_users_rcptaccess.cf:
+user = postfix
+password = password
+hosts = localhost
+dbname = postfix
+query = SELECT action FROM rcpt_access WHERE rcpt='%s'
+
+mysql_users_whitelist.cf:
+user = postfix
+password = password
+hosts = localhost
+dbname = postfix
+query = SELECT action FROM user_whitelist WHERE recipient='%s'
+
 
 -------------------------
 
