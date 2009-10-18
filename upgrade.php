@@ -1086,3 +1086,13 @@ function upgrade_655() {
     db_query_parsed(_add_index('mailbox', 'domain', 'domain'));
     db_query_parsed(_add_index('alias',   'domain', 'domain'));
 }
+
+function upgrade_730_mysql() {
+    $table_vacation = table_by_key('vacation');
+    if(!_mysql_field_exists($table_vacation, 'activefrom')) {
+       db_query_parsed("ALTER TABLE $table_vacation add activefrom datetime default NULL");
+    }
+    if(!_mysql_field_exists($table_vacation, 'activeuntil')) {
+       db_query_parsed("ALTER TABLE $table_vacation add activeuntil datetime default NULL");
+    }
+}
