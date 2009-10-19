@@ -42,7 +42,7 @@
 	</tr>
 	<tr>
 		<td>{$PALANG.pCreate_mailbox_mail}:</td>
-		<td><input class="flat" type="checkbox" name="fMail"{if $CONF.create_mailbox_subdirs}{else} checked="checked"{/if} /></td>
+		<td><input class="flat" type="checkbox" name="fMail" checked="checked" /></td>
 		<td>&nbsp;</td>
 	</tr>
 	<tr>
