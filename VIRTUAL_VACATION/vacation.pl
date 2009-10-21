@@ -17,7 +17,7 @@
 #             Slightly better logging which includes messageid
 #             Avoid infinite loops with domain aliases
 #
-# 2005-01-19  Troels Arvin <troels@arvin.dk>
+# 2005-01-19  Troels Arvin <troels at arvin.dk>
 #             PostgreSQL-version.
 #             Normalized DB schema from one vacation table ("vacation")
 #             to two ("vacation", "vacation_notification"). Uses
@@ -27,18 +27,18 @@
 #             to try to avoid SQL injection.
 #             International characters are now handled well.
 #
-# 2005-01-21  Troels Arvin <troels@arvin.dk>
+# 2005-01-21  Troels Arvin <troels at arvin.dk>
 #             Uses the Email::Valid package to avoid sending notices
 #             to obviously invalid addresses.
 #
-# 2007-08-15  David Goodwin <david@palepurple.co.uk>
+# 2007-08-15  David Goodwin <david at palepurple.co.uk>
 #             Use the Perl Mail::Sendmail module for sending mail
 #             Check for headers that start with blank lines (patch from forum)
 #
-# 2007-08-20  Martin Ambroz <amsys@trustica.cz>
+# 2007-08-20  Martin Ambroz <amsys at trustica.cz>
 #             Added initial Unicode support
 #
-# 2008-05-09  Fabio Bonelli <fabiobonelli@libero.it>
+# 2008-05-09  Fabio Bonelli <fabiobonelli at libero.it>
 #             Properly handle failed queries to vacation_notification.
 #             Fixed log reporting.
 #
@@ -56,12 +56,13 @@
 #             Use Log4Perl
 #             Added better testing (and -t option)
 #
-# 2009-06-29  Stevan Bajic <stevan@bajic.ch>
+# 2009-06-29  Stevan Bajic <stevan at bajic.ch>
 #             Add Mail::Sender for SMTP auth + more flexibility
 #
-# 2009-07-07  Stevan Bajic <stevan@bajic.ch>
+# 2009-07-07  Stevan Bajic <stevan at bajic.ch>
 #             Add better alias lookups
 #             Check for more heades from Anti-Virus/Anti-Spam solutions
+#
 # 2009-08-10  Sebastian <reg9009 at yahoo dot de>
 #             Adjust SQL query for vacation timeframe. It is now possible to set from/until date for vacation message.
 #
@@ -330,10 +331,11 @@ sub find_real_address {
 	} else {
 		my $vemail = $email;
 		$vemail =~ s/\@/#/g;
+		$vemail = $vemail . "\@" . $vacation_domain;
 		$logger->debug("Looking for alias records that \'$email\' resolves to with vacation turned on");
-		$query = qq{SELECT goto FROM alias WHERE address=? AND (goto LIKE ? OR goto LIKE ? OR goto LIKE ?)};
+		$query = qq{SELECT goto FROM alias WHERE address=? AND (goto LIKE ? OR goto LIKE ? OR goto LIKE ? OR goto = ?)};
 		$stm = $dbh->prepare($query) or panic_prepare($query);
-		$stm->execute($email,"$email,%","%,$email","%,$email,%") or panic_execute($query,"address='$email'");
+		$stm->execute($email,"$vemail,%","%,$vemail","%,$vemail,%", "$vemail") or panic_execute($query,"address='$email'");
 		$rv = $stm->rows;
 
 
