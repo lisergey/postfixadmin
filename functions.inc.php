@@ -1200,19 +1200,28 @@ function pacrypt ($pw, $pw_db="")
         $dovecotpw = "dovecotpw";
         if (!empty($CONF['dovecotpw'])) $dovecotpw = $CONF['dovecotpw'];
 
-        // prevent showing plain password in process table
-        $prefix = "postfixadmin-";
-        $tmpfile = tempnam('/tmp', $prefix);
-        $pipe = popen("'$dovecotpw' -s '$method' > '$tmpfile'", 'w'); # TODO: replace tempfile usage with proc_open call
+        # Use proc_open call to avoid safe_mode problems and to prevent showing plain password in process table
+        $spec = array(
+			0 => array("pipe", "r"), // stdin
+			1 => array("pipe", "w") // stdout
+		);
+
+		$pipe = proc_open("$dovecotpw '-s' $method", $spec, $pipes);
 
         if (!$pipe) {
-            unlink($tmpfile);
+            die("can't proc_open $dovecotpw");
         } else {
             // use dovecot's stdin, it uses getpass() twice
-            fwrite($pipe, $pw . "\n", 1+strlen($pw)); usleep(1000);
-            fwrite($pipe, $pw . "\n", 1+strlen($pw));
-            pclose($pipe);
-            $password = file_get_contents($tmpfile);
+			// Write pass in pipe stdin
+			fwrite($pipes[0], $pw . "\n", 1+strlen($pw)); usleep(1000);
+			fwrite($pipes[0], $pw . "\n", 1+strlen($pw));
+			fclose($pipes[0]);
+
+			// Read hash from pipe stdout
+			$password = fread($pipes[1], "200");
+			   fclose($pipes[1]);
+			proc_close($pipe);
+
             if ( !preg_match('/^\{' . $method . '\}/', $password)) { die("can't encrypt password with dovecotpw"); }
             $password = trim(str_replace('{' . $method . '}', '', $password));
             unlink($tmpfile);
@@ -1757,7 +1766,16 @@ function db_log ($username,$domain,$action,$data)
     }
 }
 
-
+/**
+ * db_in_clause
+ * Action: builds and returns the "field in(x, y)" clause for database queries
+ * Call: db_in_clause (string field, array values)
+ */
+function db_in_clause($field, $values) {
+	return " $field IN ('"
+	. implode("','",escape_string(array_values($values)))
+	. "') ";
+}
 
 //
 // table_by_key

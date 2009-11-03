@@ -1,6 +1,9 @@
 	{#tr_header#}
 		{if $CONF.show_status===YES}<td></td>{/if}
 		<td>{$PALANG.pOverview_mailbox_username}</td>
+		{if $display_mailbox_aliases==true}
+			<td>{$PALANG.pOverview_alias_goto}</td>
+		{/if}
 		<td>{$PALANG.pOverview_mailbox_name}</td>
 		{if $CONF.quota===YES}<td>{$PALANG.pOverview_mailbox_quota}</td>{/if}
 		<td>{$PALANG.pOverview_mailbox_modified}</td>
@@ -14,6 +17,18 @@
 				<td>{$gen_show_status_mailbox[$i]}</td>
 			{/if}
 			<td>{$item.username}</td>
+			{if $display_mailbox_aliases==true}
+				<td>
+				{foreach from=$item.goto_other item=item2 key=j}
+				   {if $item.goto_mailbox == 1}
+				   	  Mailbox<br/>
+				   {else}
+					  Forward only<br/>
+				   {/if}
+			   	   {$item2}<br/>
+				{/foreach}
+				<td>
+			{/if}
 			<td>{$item.name}</td>
 			{if $CONF.quota===YES}
 				<td>
