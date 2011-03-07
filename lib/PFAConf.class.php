@@ -1,9 +1,21 @@
 <?php
+// $id$
+
+/**
+ * @package PFA_Conf
+ * Configuration Class
+ * 
+ * 
+ * @version $Revision: $:
+ * @author $Author: $:
+ * @date $Date: $:
+ */
+ 
 /**
  * Configuration Class
  *
  */
-class Conf {
+class PFAConf {
 /**
  * Determine if $__objects cache should be wrote
  *
@@ -29,7 +41,7 @@ class Conf {
         function &getInstance() {
                 static $instance = array();
                 if (!$instance) {
-                        $instance[0] = new Conf();
+                        $instance[0] = new PFAConf();
                         //$instance[0]->__loadBootstrap($boot);
                 }
                 return $instance[0];
@@ -49,7 +61,7 @@ class Conf {
  * @access public
  */
         function write($config, $value = null) {
-                $_this =& Conf::getInstance();
+                $_this =& PFAConf::getInstance();
 
                 if (!is_array($config)) {
                         $config = array($config => $value);
@@ -84,8 +96,8 @@ class Conf {
  * @return string value of Configure::$var
  * @access public
  */
-        function read($var) {
-                $_this =& Conf::getInstance();
+        function read($var, $default = NULL) {
+                $_this =& PFAConf::getInstance();
                 
                 if ($var === 'all') {
                         $return = array();
@@ -114,7 +126,7 @@ class Conf {
                                 }
                         break;
                 }
-                return null;
+                return $default;
         }
 
         
@@ -146,7 +158,7 @@ class Conf {
          *
          */
         function load($filename) {
-          $_this =& Conf::getInstance();
+          $_this =& PFAConf::getInstance();
           if (file_exists(LIB . $filename . '.config.php')) {
             include(LIB . $filename . '.config.php');
             $found = true;

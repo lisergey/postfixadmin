@@ -28,7 +28,8 @@
  define('LIB', ROOT . DS . "lib" . DS);
   
  include('boot.php');
- boot();
+ $pfa = PFA::getInstance(PFA_BOOT_FULL);
+ $pfa->run();
 ?>
 
 <html>
