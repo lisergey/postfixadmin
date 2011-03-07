@@ -21,13 +21,14 @@
  * Form POST \ GET Variables: -none-
  */
 
-$CONF['configured'] = FALSE;
-@include_once('config.inc.php'); # hide error message because only $CONF['configured'] is checked here
-if ( $CONF['configured'] === TRUE )
-{
-    header ("Location: login.php");
-    exit;
-}
+ 
+
+ define('DS', DIRECTORY_SEPARATOR);
+ define('ROOT', dirname(__FILE__));
+ define('LIB', ROOT . DS . "lib" . DS);
+  
+ include('boot.php');
+ boot();
 ?>
 
 <html>
