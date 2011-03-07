@@ -106,6 +106,12 @@ class Configuration {
       'server' => 'localhost',
       'port' => '25',
   );
+  
+  /**
+   * Active template
+   * @todo read from database. 
+   */
+  var $template = 'Origin';
 }
 
 // Site Admin

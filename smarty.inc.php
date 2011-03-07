@@ -11,8 +11,8 @@ class PFASmarty {
 
         //$this->template->debugging = true;
         $incpath = dirname(__FILE__);
-        $this->template->template_dir = $incpath.'/templates';
-        $this->template->compile_dir  = $incpath.'/templates_c';
+        $this->template->template_dir = $incpath.'/templates/' .Conf::read('Template');
+        $this->template->compile_dir  = $incpath.'/cache/template';
         $this->template->config_dir   = $incpath.'/'.$this->template->config_dir;
         $this->template->allow_php_tag = true;
     }
