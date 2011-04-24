@@ -12,19 +12,25 @@
 
  class PFAController {
  
-	var $instance;
+	/**
+   * @access private
+   * @var object instance
+   * Singleton-Instanz des FrontControllers
+   */
+  private static $instance = null;
  
 	function __consturct () {
 		
 	}
 	
 	function getInstance () {
-		if $this->instance == NULL {
-			$this->instance = new PFAView();
+		if(self::$instance === null) {
+			self::$instance = new PFAController();
 		}
-		return $this->instance;
-	}
-	function
+        return self::$instance;
+   }
+
+
  
  }
  

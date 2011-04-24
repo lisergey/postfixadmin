@@ -10,21 +10,20 @@
  * @date $Date: $:
  */
  
- class domain {
+ class domainModel extends PFAModel {
  
- function view () {
  
-	return;
- }
- function add () {
-	return;
+ function save () {
+ 
  }
  function delete () {
-	return;
- }
- function edit () {
-	return;
- }
  
+ }
+ function add () {
+ 
+ }
+ function load () {
+ 
+ }
  }
  /* vim: set expandtab softtabstop=4 tabstop=4 shiftwidth=4: */

@@ -10,20 +10,20 @@
  * @date $Date: $:
  */
  
- class domain {
+ class domainView extends PFAView {
  
  function view () {
  
-	return;
+ 
  }
  function add () {
-	return;
+ 
  }
  function delete () {
-	return;
+ 
  }
  function edit () {
-	return;
+ 
  }
  
  }

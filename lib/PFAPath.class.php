@@ -48,14 +48,14 @@
   }
   
   function getNormalPath($path) {
-    if($source = lookupPath($path)) {
+    if($source = $this->lookupPath($path)) {
       $path = $source;
     }
     
     return $path;
   }
   function lookupPath($path) {
-    Config::load('router');
+    PFAConf::load('router');
     $this->router = PFAConf::read('route');
   }
   function isAdminPath() {

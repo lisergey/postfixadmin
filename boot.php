@@ -29,6 +29,8 @@
   define('PFA_BOOT_LANGUAGE',4);
   define('PFA_BOOT_FULL',5);
   
+  
+
  /**
  * @param string $class
  * __autoload implementation, for use with spl_autoload_register().
@@ -62,6 +64,8 @@ class PFA {
    */
   private static $instance = null;
 
+    var $view = null;
+  
   function __construct($phase, $new_phase = true) {
     static $phases = array(
       PFA_BOOT_CONFIGURATION,
@@ -141,13 +145,16 @@ class PFA {
 	
     if( is_file(ROOT . DS . 'controller'  . DS . $cPath['class']. '_controller.php') ) {  
       require_once(ROOT . DS . 'controller' . DS . $cPath['class']. '_controller.php');
-      $page = new $cPath['class'];
-      $page_result = $page->{$cPath['method']};
+	  
+      $this->controller = new $cPath['class'];
+
+      $page_result = $this->controller->{$cPath['method']}();
       
     } elseif (is_file(ROOT . DS . 'plugin' . DS . $cPath['class'] . DS . $cPath['class']. '_controller.php')) {
       require_once(ROOT . DS . 'plugin' . DS . $cPath['class'] . DS . $cPath['class']. '_controller.php');
-	  $page = new $cPath['class'];
-      $page_result = $page->{$cPath['method']};
+	  
+	  $this->controller = new $cPath['class'];
+      $page_result = $this->controller->{$cPath['method']};
 
 	  
     } elseif (is_file(ROOT.DS.'page'.DS.$cPath['class'].'php')) {
@@ -157,8 +164,8 @@ class PFA {
 
 		$page_result = NULL;
 	}
-	$view = View::getView($cPath['class']);
-    $view->display($cPath['method'], $page_result);
+	$this->view = PFAView::getInstance($cPath['class']);
+    $this->view->display($cPath['method'], $page_result);
   }
   
   function _pfa_boot_config() {

@@ -12,29 +12,49 @@
  */
  
  class PFAView {
-	var $instance;
+	/**
+   * @access private
+   * @var object instance
+   * Singleton-Instanz des FrontControllers
+   */
+  private static $instance = null;
+  
 	var $view;
+	var $viewInstance;
 	
-	function __consturct() {
-		if(is_file(ROOT . DS . 'view'  . DS . $cPath['class']. '_view.php')) {
-			require_once();
-			
-		}
+	
+	function __consturct($view) {
+		$this->setView($view);
+
 	}
 	function getInstance () {
-		if $this->instance == NULL {
-			$this->instance = new PFAView();
+		if(self::$instance === null) {
+			self::$instance = new PFAView();
 		}
-		return $this->instance;
+        return self::$instance;
 	}
 	function getView () {
-	return $this->view
+		return $this->view;
 	}
-	function setView () {}
+	function loadView () {
+		if(is_file(ROOT . DS . 'view'  . DS . $this->view. '_view.php')) {
+			require_once(ROOT . DS . 'view'  . DS . $this->view. '_view.php');
+			$this->viewInstance = new $this->view.'View';
+
+		} elseif (is_file(ROOT . DS . 'plugin'  . DS . $this->view. DS . $this->view.'_view.php')) {
+			require_once(ROOT . DS . 'plugin'  . DS . $this->view. DS . $this->view.'_view.php');
+			$this->viewInstance = new $this->view.'View';
+		}
+	}
+	function setView ($view) {
+		$this->view = $view;
+		loadView;
+	
+	}
 	function display() {
 		return 0;
 	}
-	function
+	
 	
  
  }
