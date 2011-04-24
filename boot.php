@@ -137,18 +137,28 @@ class PFA {
   function run($path = NULL) {
     $read_only_path = !empty($path) ? $this->path->build($path) : $this->path->cPath;
     $cPath = !is_array($read_only_path) ? explode('/', $read_only_path) : $read_only_path;
-      
+    
+	
     if( is_file(ROOT . DS . 'controller'  . DS . $cPath['class']. '_controller.php') ) {  
       require_once(ROOT . DS . 'controller' . DS . $cPath['class']. '_controller.php');
       $page = new $cPath['class'];
       $page_result = $page->{$cPath['method']};
       
-      $view = View::getView();
-      $view->display();
-      }
-    } elseif (is_file(ROOT . DS . 'plugin' . DS . $cPath['class'] . DS . $cPath['class']'._controller.php') {
-      require_once(ROOT . DS . 'plugin' . DS . $cPath['class'] . DS . $cPath['class']'._controller.php');
-    }
+    } elseif (is_file(ROOT . DS . 'plugin' . DS . $cPath['class'] . DS . $cPath['class']. '_controller.php')) {
+      require_once(ROOT . DS . 'plugin' . DS . $cPath['class'] . DS . $cPath['class']. '_controller.php');
+	  $page = new $cPath['class'];
+      $page_result = $page->{$cPath['method']};
+
+	  
+    } elseif (is_file(ROOT.DS.'page'.DS.$cPath['class'].'php')) {
+
+    
+	} else {
+
+		$page_result = NULL;
+	}
+	$view = View::getView($cPath['class']);
+    $view->display($cPath['method'], $page_result);
   }
   
   function _pfa_boot_config() {
