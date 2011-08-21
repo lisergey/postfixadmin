@@ -6,9 +6,9 @@
  * Boot
  * 
  * @copyright 
- * @version $Revision: $:
- * @author $Author: $:
- * @date $Date: $:
+ * @version $Revision$:
+ * @author $Author$:
+ * @date $Date$:
  */
 
 /**
@@ -169,7 +169,7 @@ class PFA {
     }
 	  $this->controller = new $cPath['class'];
       $viewName = isset($this->controller->view) ? $this->controller->view : $cPath['class'];
-      $this->view = PFAView::getInstance($viewName);
+      $this->view = PFAView::getInstance(§viewName);
       
       $page_result = $this->controller->{$cPath['method']}();
       $this->view->display($cPath['method'], $page_result);

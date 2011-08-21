@@ -6,9 +6,9 @@
  * Configuration Class
  * 
  * 
- * @version $Revision: $:
- * @author $Author: $:
- * @date $Date: $:
+ * @version $Revision$:
+ * @author $Author$:
+ * @date $Date$:
  */
  
 /**
@@ -69,6 +69,7 @@ class PFAConf {
 
                 foreach ($config as $names => $value) {
                         $name = $_this->__configVarNames($names);
+                        var_dump($config);
                         switch (count($name)) {
                                 case 3:
                                         $_this->{$name[0]}[$name[1]][$name[2]] = $value;

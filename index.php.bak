@@ -30,8 +30,6 @@
  include('boot.php');
  $pfa = PFA::getInstance(PFA_BOOT_FULL);
  $pfa->run();
- 
- var_dump($pfa);
 
 /* vim: set expandtab softtabstop=4 tabstop=4 shiftwidth=4: */
 ?>
