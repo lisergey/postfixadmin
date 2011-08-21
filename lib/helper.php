@@ -13,3 +13,7 @@ function error($level, $msg) {
     break;
   }
 }
+
+function t($string) {
+
+}
